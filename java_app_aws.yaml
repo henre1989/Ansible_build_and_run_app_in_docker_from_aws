@@ -10,17 +10,22 @@
     region: us-east-2
   tasks:
     - name: Launch instance
-      ec2:
+      ec2_instance:
          key_name: "{{ key_name }}"
-         group: "{{ security_group }}"
+         security_group: "{{ security_group }}"
          instance_type: "{{ instance_type }}"
-         image: "{{ image }}"
-         wait: true
+         image_id: "{{ image }}"
+#         wait: true
          region: "{{ region }}"
-         instance_tags:
-           Name: build_app
+         tags:
+           name: build_app
+
+#         instance_tags:
+#           Name: build_app
          #assign_public_ip: yes
       register: ec2
+    - debug:
+        var: ec2
 
 #    - name: Add new instance to host group
 #      add_host:
