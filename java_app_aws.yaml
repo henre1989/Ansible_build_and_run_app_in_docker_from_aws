@@ -26,7 +26,7 @@
          #assign_public_ip: yes
       register: ec2
     - debug:
-        var: (output_text.stdout | from_json).instances
+        var: (ec2.stdout | from_json).instances
 
 #    - name: Add new instance to host group
 #      add_host:
