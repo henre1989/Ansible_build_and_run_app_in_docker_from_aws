@@ -11,21 +11,22 @@
   tasks:
     - name: Launch instance
       ec2_instance:
+         name: "build_app"
          key_name: "{{ key_name }}"
          security_group: "{{ security_group }}"
          instance_type: "{{ instance_type }}"
          image_id: "{{ image }}"
 #         wait: true
          region: "{{ region }}"
-         tags:
-           name: build_app
+#         tags:
+#           name: build_app
 
 #         instance_tags:
 #           Name: build_app
          #assign_public_ip: yes
       register: ec2
     - debug:
-        var: ec2
+        var: (output_text.stdout | from_json).instances
 
 #    - name: Add new instance to host group
 #      add_host:
