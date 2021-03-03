@@ -27,5 +27,5 @@
       lineinfile:
         path: /etc/ansible/hosts
         insertafter: '\[build\]'
-        line: "{{ item.public_ip }}"
+        line: "{{ item.public_ip_address }}"
       with_items: "{{ ec2.instances }}"
