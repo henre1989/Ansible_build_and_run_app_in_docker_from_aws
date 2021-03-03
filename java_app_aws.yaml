@@ -17,6 +17,8 @@
          instance_type: "{{ instance_type }}"
          image_id: "{{ image }}"
          region: "{{ region }}"
+         tags:
+           name: build
       register: ec2
     - debug:
         var: ec2.instances
