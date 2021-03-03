@@ -17,6 +17,8 @@
          image: "{{ image }}"
          wait: true
          region: "{{ region }}"
+         instance_tags:
+           Name: build_app
          #assign_public_ip: yes
       register: ec2
 
