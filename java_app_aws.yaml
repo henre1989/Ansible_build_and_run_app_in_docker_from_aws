@@ -11,14 +11,14 @@
   tasks:
     - name: Launch instance
       ec2_instance:
-         name: "{{ item  }}"
+         name: "{{ item }}"
          key_name: "{{ key_name }}"
          security_group: "{{ security_group }}"
          instance_type: "{{ instance_type }}"
          image_id: "{{ image }}"
          region: "{{ region }}"
          tags:
-           name: "{{ item  }}"
+           name: "{{ item }}"
       register: ec2
     - debug:
         var: ec2.instances
