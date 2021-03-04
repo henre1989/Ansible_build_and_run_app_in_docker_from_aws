@@ -22,6 +22,9 @@
       register: ec2
     - debug:
         var: ec2.instances
+      with_items:
+        - "build"
+        - "docker_run"
 
 #    - name: Ensure the added instance is in /etc/ansible/hosts
 #      lineinfile:
@@ -35,10 +38,11 @@
         hostname: "{{ item.public_ip_address }}"
         groups: "{{ item }}"
         ansible_ssh_private_key_file: ~/.ssh/my-key.pem
+        with_items:
+          - "build"
+          - "docker_run"
       with_items: "{{ ec2.instances }}"
-    with_items:
-      - "build"
-      - "docker_run"
+
 
 #- name: Create a sandbox instance
 #  hosts: build
