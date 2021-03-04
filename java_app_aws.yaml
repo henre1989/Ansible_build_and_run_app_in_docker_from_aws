@@ -35,61 +35,97 @@
 #        line: "{{ item.public_ip_address }}"
 #      with_items: "{{ ec2.instances }}"
 
-    - name: Add all instance public IPs to host group
+    - name: Add all instance public IPs to host group build
       add_host:
         hostname: "{{ item.public_ip_address }}"
         groups: build
         ansible_ssh_private_key_file: ~/.ssh/my-key.pem
       with_items: "{{ ec2.results[0].instances }}"
 
+    - name: Add all instance public IPs to host group docker_run
+      add_host:
+        hostname: "{{ item.public_ip_address }}"
+        groups: docker_run
+        ansible_ssh_private_key_file: ~/.ssh/my-key.pem
+      with_items: "{{ ec2.results[1].instances }}"
 
-#- name: Create a sandbox instance
-#  hosts: build
-#  remote_user: ubuntu
-#  become: yes
-#  vars:
-#      pass_dockerhub: !vault |
-#          $ANSIBLE_VAULT;1.1;AES256
-#          39353830306536366432653162306236366362656530376436346632623363396530663038366336
-#          6633623434383566346464633136333831643463306439310a353335653234363133326130363734
-#          39666530313237633765393261396566363338303164316234616632313538323265373835666136
-#          6538376536633563350a313164633639323236393535636338653064626365303636353830343736
-#          35386363323035383861353238336633326162396163656363656163393630383432346432303864
-#          3538636533363837393361383631616538646237366166343631
-#  tasks:
-#    - name: update repository
-#      apt:
-#       update_cache: yes
-#    - name: Ensure docker install
-#      apt:
-#       name: docker.io
-#       state: present
-#    - name: Ensure Dockerfile is clone
-#      git:
-#       repo: https://github.com/henre1989/Dockerfile_java_app.git
-#       dest: /home/server1/Dockerfile_java_app
-#    - name: Ensure python3-pip is install
-#      apt:
-#       name: python3-pip
-#       state: present
-#    - name: Ensure Docker SDK for Python is install
-#      pip:
-#       name: docker
-#       state: present
-#    - name: Ensure PyYAML is install
-#      pip:
-#       name: PyYAML
-#       state: present
-#    - name: Login to DockerHub
-#      docker_login:
-#       username: henre1989
-#       password: "{{ pass_dockerhub }}"
-#       state: present
-#    - name: Ensure build docker image und push to dockerhub
-#      docker_image:
-#       build:
-#        path: /home/server1//Dockerfile_java_app
-#       name: henre1989/java_app
-#       tag: v1
-#       push: yes
-#       source: build
+- name: Create a sandbox instance
+  hosts: build
+  remote_user: ubuntu
+  become: yes
+  vars:
+      pass_dockerhub: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39353830306536366432653162306236366362656530376436346632623363396530663038366336
+          6633623434383566346464633136333831643463306439310a353335653234363133326130363734
+          39666530313237633765393261396566363338303164316234616632313538323265373835666136
+          6538376536633563350a313164633639323236393535636338653064626365303636353830343736
+          35386363323035383861353238336633326162396163656363656163393630383432346432303864
+          3538636533363837393361383631616538646237366166343631
+  tasks:
+    - name: update repository
+      apt:
+       update_cache: yes
+    - name: Ensure docker install
+      apt:
+       name: docker.io
+       state: present
+    - name: Ensure Dockerfile is clone
+      git:
+       repo: https://github.com/henre1989/Dockerfile_java_app.git
+       dest: /home/server1/Dockerfile_java_app
+    - name: Ensure python3-pip is install
+      apt:
+       name: python3-pip
+       state: present
+    - name: Ensure Docker SDK for Python is install
+      pip:
+       name: docker
+       state: present
+    - name: Ensure PyYAML is install
+      pip:
+       name: PyYAML
+       state: present
+    - name: Login to DockerHub
+      docker_login:
+       username: henre1989
+       password: "{{ pass_dockerhub }}"
+       state: present
+    - name: Ensure build docker image und push to dockerhub
+      docker_image:
+       build:
+        path: /home/server1//Dockerfile_java_app
+       name: henre1989/java_app
+       tag: v1
+       push: yes
+       source: build
+
+- name: Run app in docker
+  hosts: docker_run
+  become: yes
+  tasks:
+    - name: update repository
+      apt:
+       update_cache: yes
+    - name: Ensure docker install
+      apt:
+       name: docker.io
+       state: present
+    - name: Ensure python3-pip is install
+      apt:
+       name: python3-pip
+       state: present
+    - name: Ensure Docker SDK for Python is install
+      pip:
+       name: docker
+       state: present
+    - name: Ensure PyYAML is install
+      pip:
+       name: PyYAML
+       state: present
+    - name: Ensure docker container is run
+      docker_container:
+       name: java_app
+       image: henre1989/java_app:v1
+       published_ports: 8080:8080
+       state: started
