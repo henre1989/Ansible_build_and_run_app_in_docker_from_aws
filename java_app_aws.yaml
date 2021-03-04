@@ -26,15 +26,6 @@
     - debug:
         var: ec2.results
 
-
-
-#    - name: Ensure the added instance is in /etc/ansible/hosts
-#      lineinfile:
-#        path: /etc/ansible/hosts
-#        insertafter: '\[build\]'
-#        line: "{{ item.public_ip_address }}"
-#      with_items: "{{ ec2.instances }}"
-
     - name: Add all instance public IPs to host group build
       add_host:
         hostname: "{{ item.public_ip_address }}"
@@ -102,6 +93,7 @@
 
 - name: Run app in docker
   hosts: docker_run
+  remote_user: ubuntu
   become: yes
   tasks:
     - name: update repository
