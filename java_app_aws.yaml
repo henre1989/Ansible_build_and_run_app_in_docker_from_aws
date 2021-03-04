@@ -24,7 +24,7 @@
         - "docker_run"
       register: ec2
     - debug:
-        var: ec2.results
+        var: ec2.results[0]
 
 
 #    - name: Ensure the added instance is in /etc/ansible/hosts
