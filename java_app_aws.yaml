@@ -24,7 +24,7 @@
         - "docker_run"
       register: ec2
     - debug:
-        var: ec2.instances
+        var: ec2
 
 
 #    - name: Ensure the added instance is in /etc/ansible/hosts
@@ -34,15 +34,15 @@
 #        line: "{{ item.public_ip_address }}"
 #      with_items: "{{ ec2.instances }}"
 
-    - name: Add all instance public IPs to host group
-      add_host:
-        hostname: "{{ item.public_ip_address }}"
-        groups: "{{ item }}"
-        ansible_ssh_private_key_file: ~/.ssh/my-key.pem
-        with_items:
-          - "build"
-          - "docker_run"
-      with_items: "{{ ec2.instances }}"
+#    - name: Add all instance public IPs to host group
+#      add_host:
+#        hostname: "{{ item.public_ip_address }}"
+#        groups: "{{ item }}"
+#        ansible_ssh_private_key_file: ~/.ssh/my-key.pem
+#        with_items:
+#          - "build"
+#          - "docker_run"
+#      with_items: "{{ ec2.instances }}"
 
 
 #- name: Create a sandbox instance
