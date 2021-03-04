@@ -19,12 +19,13 @@
          region: "{{ region }}"
          tags:
            name: "{{ item }}"
+      with_items:
+        - "build"
+        - "docker_run"
       register: ec2
     - debug:
         var: ec2.instances
-    with_items:
-      - "build"
-      - "docker_run"
+
 
 #    - name: Ensure the added instance is in /etc/ansible/hosts
 #      lineinfile:
